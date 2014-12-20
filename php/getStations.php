@@ -6,7 +6,7 @@ include("dbOpen.php");
 
 $mainarray = array();
 
-$sql = "SELECT id, name, number FROM stations";
+$sql = "SELECT id, name, number FROM stations WHERE Active = 1";
 
 $result = $conn->query($sql);
 
@@ -25,6 +25,7 @@ if ($result->num_rows > 0) {
     echo "0 results";
 }
 include ("dbClose.php");
+
 
 echo(json_encode($mainarray));
 

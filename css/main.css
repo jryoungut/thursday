@@ -2,15 +2,19 @@
 }
 #content
 {
-   background-color: #f2f2f2;
+   /*background-color: #f2f2f2;*/
    padding: 20px 10px;
    overflow: auto;
+   position:relative;
 }
 #tab-container
 {
-   float: left;
+   /*display: inline-block;*/
    margin: 10px 0 0 0;
-   width: 226px;
+   width: 256px;
+   position:absolute;
+   top:10px;
+   left:0px;
 }
 #tab-container ul
 {
@@ -36,32 +40,107 @@
 }
 #tab-container ul li:hover
 {
-   border-left: 8px solid #333;
+   /*border-left: 8px solid #333;*/
 }
 #tab-container ul li a:hover
 {
-   color: #000;
+   /*color: #000;*/
 }
 #tab-container ul li.selected
 {
    border-right: none;
-   background-color: #fff;
-   border-left: 8px solid #006699;
+   background-color: #fafafa;
+   /*border-left: 8px solid #006699;*/
 }
+#tab-container ul li.notselected
+{
+   border-right: 1px solid #666;
+   background-color: #ddd;
+   /*border-left: 8px solid #666;*/
+}
+
+#tab-container ul li.complete
+{
+   border-left: 8px solid #15C23C;
+}
+#tab-container ul li.partial
+{
+   border-left: 8px solid #FAD519;
+}
+#tab-container ul li.blank
+{
+   border-left: 8px solid #FA193F;
+}
+
+
 #main-container
 {
-   min-height: 400px;
-   margin: 0 0 0 225px;
-   padding: 20px;
-   background-color: #fff;
+   background-color: #fafafa;
    border: 1px solid #888;
+   display:inline-block;
+   font-size:1.4em;
+   margin: 0 0 0 245px;
+   min-height: 500px;
+   min-width:700px;
+   padding: 20px;
+}
+
+#main-container .row{
+    margin:0 0 6px 0;
+}
+
+#main-container .row label{
+    width:110px;
+}
+#main-container .chkboxRow label{
+    width:auto;
+}
+
+#main-container .row input[type=text]{
+    width:80%;
+}
+
+#main-container .row input[type=checkbox]{
+    width:20px;
+    height:20px;
+    position:relative;
+    top:3px;
+    margin-right: 6px;
+}
+
+#main-container .row #tblTirePressure{
+    border-collapse:separate;
+    border-spacing:5px 20px;
+}
+#main-container .row #tblTirePressure input[type=number],
+#main-container .row #tblTirePressure input[type=text]{
+    width:3em;
+    text-align:center;
+}
+
+#main-container .row #tblTirePressure td{
+    padding:10px 0;
+}
+#main-container .row #tblTirePressure td.tire{
+    background:url('../img/tire.png') no-repeat center center;
+    height:99px;
+}
+
+#main-container .row #tblTirePressure td:nth-child(3){
+    width:40px;
 }
 
 .vertTabs{
-    padding-left:10px;
+    padding-left:0px;
+}
+.vertTabs li{
+    font-size:1.4em;
+    border-radius: 12px 0 0 12px;
+    -webkit-border-radius: 12px 0 0 12px;
 }
 .vertTabs li a div:first-child{
     font-size:.9em;
+    font-weight:bold;
     text-align:right;
 }
 .vertTabs li a div:last-child{
@@ -69,4 +148,30 @@
     font-weight:bold;
     color:#111;
     text-align:right;
+}
+
+.large-text{
+    font-size:3em;
+}
+
+.alignCenter{
+    text-align:center;
+}
+#main-container .battery-row,
+#main-container .officer-row,
+#main-container .date-row{
+    border-bottom:1px dotted #666;
+    padding-bottom:10px;
+    margin-bottom:10px;
+}
+#main-container .date-row div:first-child{
+    float:left;
+}
+#main-container .date-row div:last-child{
+    float:right;
+}
+
+#main-container .date-row div span:nth-child(2){
+    font-weight:bold;
+    margin-left:5px;
 }

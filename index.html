@@ -39,6 +39,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-sanitize.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/main.js"></script>
 
@@ -65,7 +67,7 @@
                         <a href="#page-top"></a>
                     </li>
                     <li class="page-scroll">
-                        <a href="#portfolio">Report</a>
+                        <a href="#portfolio">Checkoff</a>
                     </li>
                     <li class="page-scroll">
                         <a href="#about">How To</a>
@@ -97,7 +99,7 @@
     <!-- Postcards Grid Section -->
     <section id="portfolio">
         <div class="container">
-            <div class="row">
+            <div class="row large-text">
                 <div class="col-lg-12">
                     <label>Station:</label>
                     <select 
@@ -119,8 +121,11 @@
             </div>
             <div id="content">
                 <div id="tab-container">
-                    <ul class="vertTabs">
-                        <li ng-repeat="a in apparatus">
+                    <ul class="vertTabs" ng-model="selectedApparatus">
+                        <li id="app_{{a.id}}"
+                            ng-repeat="a in apparatus"
+                            ng-class="selectedApparatus.id === a.id ? 'selected' : 'notselected'"
+                            ng-click="setSelectedApparatus($index)">
                             <a href="">
                                 <div>{{a.fleetNum}}</div>
                                 <div>{{a.apparatus}}</div>
@@ -128,8 +133,71 @@
                         </li>
                     </ul>
                 </div>
+
                 <div id="main-container">
-                    <span>Peter, the form will go here.</span>
+                    <div class="row date-row">
+                        <div>
+                            <span>Date:</span><span>{{date}}</span>
+                        </div>
+                        <div>
+                            <span>Week:</span><span>{{weekOfYear}}</span>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="row">
+                        <label>Engineer:</label>
+                        <input type="text" ng-model="checkoffData.engineer" value="{{checkoffData.engineer}}" />
+                    </div>
+                    <div class="row officer-row">
+                        <label>Officer:</label>
+                        <input type="text" ng-model="checkoffData.officer" value="{{checkoffData.officer}}" />
+                    </div>
+                    <div class="row chkboxRow" ng-show="selectedApparatus.dryPrime === '1'">
+                        <input type="checkbox" id="chkDryPrime" ng-model="checkoffData.dryPrime" /><label for="chkDryPrime">Dry prime</label>
+                    </div>
+                    <div class="row chkboxRow" ng-show="selectedApparatus.airTank === '1'">
+                        <input type="checkbox" id="chkAirTank" ng-model="checkoffData.airTank" /><label for="chkAirTank">Drain air tanks</label>
+                    </div>
+                    <div class="row chkboxRow">
+                        <input type="checkbox" id="chkATFLevel" ng-model="checkoffData.atfLevel" /><label for="chkATFLevel">ATF Level (Engine hot and at idle)</label>
+                    </div>
+                    <div class="row chkboxRow">
+                        <input type="checkbox" id="chkBattLeft" ng-model="checkoffData.batteryLeft" /><label for="chkBattLeft">Left side battery check</label>
+                    </div>
+                    <div class="row chkboxRow battery-row">
+                        <input type="checkbox" id="chkBattRight" ng-model="checkoffData.batteryRight" /><label for="chkBattRight">Right side battery check</label>
+                    </div>
+                    <div class="row chkboxRow">
+                        <label>Tire pressure:</label>
+                    </div>
+                    <div class="row">
+                        <table id="tblTirePressure">
+                            <tr><td colspan="5" class="alignCenter">Front</td></tr>
+                            <tr>
+                                <td class="tire"><input type="number" max="150" maxlength="3" ng-model="checkoffData.tirePressure_FL_O" value="{{checkoffData.tirePressure_FL_O}}" /></td>
+                                <td ng-show="selectedApparatus.tireCnt > 4"></td>
+                                <td></td>
+                                <td ng-show="selectedApparatus.tireCnt > 4"></td>
+                                <td class="tire"><input type="number" max="150" maxlength="3" ng-model="checkoffData.tirePressure_FR_O" value="{{checkoffData.tirePressure_FR_O}}" /></td>
+                            </tr>
+                            <tr ng-show="selectedApparatus.tireCnt === '10'">
+                                <td class="tire"><input type="number" max="150" maxlength="3" ng-model="checkoffData.tirePressure_ML_O" value="{{checkoffData.tirePressure_ML_O}}" /></td>
+                                <td class="tire"><input type="number" max="150" maxlength="3" ng-model="checkoffData.tirePressure_ML_I" value="{{checkoffData.tirePressure_ML_I}}" /></td>
+                                <td></td>
+                                <td class="tire"><input type="number" max="150" maxlength="3" ng-model="checkoffData.tirePressure_MR_I" value="{{checkoffData.tirePressure_MR_I}}" /></td>
+                                <td class="tire"><input type="number" max="150" maxlength="3" ng-model="checkoffData.tirePressure_MR_O" value="{{checkoffData.tirePressure_MR_O}}" /></td>
+                            </tr>
+                            <tr>
+                                <td class="tire"><input type="number" ng-model="checkoffData.tirePressure_BL_O" value="{{checkoffData.tirePressure_BL_O}}" /></td>
+                                <td class="tire" ng-show="selectedApparatus.tireCnt > 4"><input type="number" ng-model="checkoffData.tirePressure_BL_I" value="{{checkoffData.tirePressure_BL_I}}" /></td>
+                                <td></td>
+                                <td class="tire" ng-show="selectedApparatus.tireCnt > 4"><input type="number" ng-model="checkoffData.tirePressure_BR_I" value="{{checkoffData.tirePressure_BR_I}}" /></td>
+                                <td class="tire"><input type="number" ng-model="checkoffData.tirePressure_BR_O" value="{{checkoffData.tirePressure_BR_O}}" /></td>
+                            </tr>
+                            <tr><td colspan="5" class="alignCenter">Rear</td></tr>
+                        </table>
+                    </div>
+                    <div class="hide">--{{selectedApparatus}}--</div>
                 </div>
             </div>
 
