@@ -16,6 +16,7 @@
 
     <!-- Custom CSS -->
     <link href="css/freelancer.css" rel="stylesheet">
+    <link href="css/ui-grid.css" rel="styleSheet" />
     <link href="css/main.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
@@ -41,12 +42,14 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-touch.min.js"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+
+    <script src="js/ui-grid.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/main.js"></script>
 
 </head>
 
-<body id="page-top" class="index" ng-app="jpcsApp" ng-controller="MainController">
+<body id="page-top" class="index" ng-app="checkoffApp" ng-controller="MainController">
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
@@ -146,11 +149,11 @@
                     <div class="clearfix"></div>
                     <div class="row">
                         <label>Engineer:</label>
-                        <input type="text" ng-model="checkoffData.engineer" value="{{checkoffData.engineer}}" />
+                        <input type="text" ng-model="checkoffData.engineer" value="{{checkoffData.engineer}}" placeholder="On duty engineer" />
                     </div>
                     <div class="row officer-row">
                         <label>Officer:</label>
-                        <input type="text" ng-model="checkoffData.officer" value="{{checkoffData.officer}}" />
+                        <input type="text" ng-model="checkoffData.officer" value="{{checkoffData.officer}}" placeholder="On duty officer" />
                     </div>
                     <div class="row chkboxRow" ng-show="selectedApparatus.dryPrime === '1'">
                         <input type="checkbox" id="chkDryPrime" ng-model="checkoffData.dryPrime" /><label for="chkDryPrime">Dry prime</label>
@@ -170,7 +173,7 @@
                     <div class="row chkboxRow">
                         <label>Tire pressure:</label>
                     </div>
-                    <div class="row">
+                    <div class="row tire-pressure-row">
                         <table id="tblTirePressure">
                             <tr><td colspan="5" class="alignCenter">Front</td></tr>
                             <tr>
@@ -196,6 +199,10 @@
                             </tr>
                             <tr><td colspan="5" class="alignCenter">Rear</td></tr>
                         </table>
+                    </div>
+                    <div class="row chkboxRow">
+                        <label>Issues:</label>
+                        <div ui-grid="{ data: checkoffData.issues }" class="myGrid"></div>
                     </div>
                     <div class="hide">--{{selectedApparatus}}--</div>
                 </div>

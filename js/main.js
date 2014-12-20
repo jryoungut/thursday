@@ -2,8 +2,9 @@
 
 
 // Declare app level module which depends on views, and components
-var jpcsApp = angular.module('jpcsApp', [
-  'ngRoute']).
+var checkoffApp = angular.module('checkoffApp', [
+  'ngRoute'
+]).
 config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/getStations', {
@@ -16,7 +17,7 @@ config(['$routeProvider', function ($routeProvider) {
 }]);
 
 
-jpcsApp.controller('MainController', ['$scope', '$http', function ($scope, $http) {
+checkoffApp.controller('MainController', ['$scope', '$http', function ($scope, $http) {
     $scope.stations = [];
     $scope.apparatus = [];
     $scope.selectedStation = 0;
@@ -27,6 +28,14 @@ jpcsApp.controller('MainController', ['$scope', '$http', function ($scope, $http
     $scope.weekOfYear = moment().week() + '-' + moment().weekYear();
 
     $scope.checkoffData = [];
+
+    $scope.checkoffData.issues = [
+        {
+            "week": "51-2014",
+            "stationId ": 1,
+            "issue": "Right Front blinker doesn't blink"
+        }
+    ];
 
 
     // Get the list of stations

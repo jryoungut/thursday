@@ -110,7 +110,7 @@
 
 #main-container .row #tblTirePressure{
     border-collapse:separate;
-    border-spacing:5px 20px;
+    border-spacing:5px 4px;
 }
 #main-container .row #tblTirePressure input[type=number],
 #main-container .row #tblTirePressure input[type=text]{
@@ -118,8 +118,11 @@
     text-align:center;
 }
 
+#main-container .row #tblTirePressure tr:nth-child(2) td{
+    height:140px;
+}
 #main-container .row #tblTirePressure td{
-    padding:10px 0;
+    padding:0;
 }
 #main-container .row #tblTirePressure td.tire{
     background:url('../img/tire.png') no-repeat center center;
@@ -157,6 +160,7 @@
 .alignCenter{
     text-align:center;
 }
+#main-container .tire-pressure-row,
 #main-container .battery-row,
 #main-container .officer-row,
 #main-container .date-row{
@@ -175,3 +179,9 @@
     font-weight:bold;
     margin-left:5px;
 }
+
+
+.myGrid {
+    width: 500px;
+    height: 250px;
+  }
