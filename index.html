@@ -16,7 +16,7 @@
 
     <!-- Custom CSS -->
     <link href="css/freelancer.css" rel="stylesheet">
-    <link href="css/ui-grid.css" rel="styleSheet" />
+    <link href="css/ui-grid-stable.css" rel="styleSheet" />
     <link href="css/main.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
@@ -43,7 +43,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
 
-    <script src="js/ui-grid.js"></script>
+    <script src="js/ui-grid-stable.js"></script>
     <!-- Custom JavaScript -->
     <script src="js/main.js"></script>
 
@@ -200,9 +200,38 @@
                             <tr><td colspan="5" class="alignCenter">Rear</td></tr>
                         </table>
                     </div>
-                    <div class="row chkboxRow">
+                    <div class="row chkboxRow engine-row">
+                        <div ng-switch on="selectedApparatus.motorTracking">
+                            <label ng-switch-when="mi">Current mileage odometer reading:</label>
+                            <label ng-switch-when="hr">Current hour meter reading:</label>
+
+                            <div ng-switch-when="mi">
+                                <!--<label>Current mileage:</label>-->
+                                <input type="text" ng-model="checkoffData.mileage" value="{{checkoffData.mileage}}" placeholder="Mileage" />
+                                <span>Miles until next service: {{selectedApparatus.NextServiceDue - checkoffData.mileage}}</span>
+                            </div>
+
+                            <div ng-switch-when="hr">
+                                <!--<label>Current hours:</label>-->
+                                <input type="text" ng-model="checkoffData.hours" value="{{checkoffData.hours}}" placeholder="Hours" />
+                                <span>Hours until next service: {{selectedApparatus.nextServiceDue - checkoffData.hours}}</span>
+                            </div>
+
+                        </div>
+                        
+                    </div>
+                    <div class="row chkboxRow issue-row">
                         <label>Issues:</label>
                         <div ui-grid="{ data: checkoffData.issues }" class="myGrid"></div>
+                    </div>
+                    <div class="row chkboxRow signature-row">
+                        <label>Electronic signature:</label>
+                        <div class="warning-msg">
+                            By entering your name in the box below you atest that you have performed the required inspections, checks, and actions as indicated, and that you have entered any known issues for the selected apparatus.
+                        </div>
+                        <div>
+                            <input type="text" ng-model="checkoffData.electronicSignature" value="{{checkoffData.electronicSignature}}" />
+                        </div>
                     </div>
                     <div class="hide">--{{selectedApparatus}}--</div>
                 </div>

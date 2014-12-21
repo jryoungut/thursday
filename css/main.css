@@ -99,6 +99,9 @@
 #main-container .row input[type=text]{
     width:80%;
 }
+#main-container .engine-row input[type=text]{
+    width:30%;
+}
 
 #main-container .row input[type=checkbox]{
     width:20px;
@@ -160,6 +163,9 @@
 .alignCenter{
     text-align:center;
 }
+#main-container .signature-row,
+#main-container .engine-row,
+#main-container .issue-row,
 #main-container .tire-pressure-row,
 #main-container .battery-row,
 #main-container .officer-row,
@@ -180,8 +186,15 @@
     margin-left:5px;
 }
 
+.warning-msg{
+    font-size:.8em;
+    border:2px solid #fa8e19;
+    padding:5px;
+    background-color:#fbc386;
+    margin-bottom:10px;
+}
 
 .myGrid {
-    width: 500px;
-    height: 250px;
+    width: 100%;
+    max-height: 250px;
   }

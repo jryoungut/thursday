@@ -3,7 +3,7 @@
 
 // Declare app level module which depends on views, and components
 var checkoffApp = angular.module('checkoffApp', [
-  'ngRoute'
+  'ngRoute', 'ui.grid'
 ]).
 config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
@@ -30,11 +30,7 @@ checkoffApp.controller('MainController', ['$scope', '$http', function ($scope, $
     $scope.checkoffData = [];
 
     $scope.checkoffData.issues = [
-        {
-            "week": "51-2014",
-            "stationId ": 1,
-            "issue": "Right Front blinker doesn't blink"
-        }
+        {"issue": "Right Front blinker doesn't blink"}
     ];
 
 
