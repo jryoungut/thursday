@@ -198,3 +198,94 @@
     width: 100%;
     max-height: 250px;
   }
+.stationsListGrid {
+    width: 100%;
+    height:650px;
+}
+
+#adminTabs {
+    padding: 100px 20px 0 20px;
+}
+
+#adminTabs div {
+		font-size: 22px;
+		font-weight: bold;
+		margin: 0;
+        display:block;
+	}
+#adminTabs div .tabHolder{
+    margin:0 20px;
+    font-size:14px !important;
+}
+#adminTabs ul {
+}
+#adminTabs li {
+	float: left;
+	background-color: #c8c8c8;
+	padding: 5px 19px;
+	margin: 5px 2px 0px 0px;
+	color: #fff;
+	list-style: none;
+    cursor:pointer;
+    -webkit-border-radius: 8px 8px 0 0;
+    border-radius: 8px 8px 0 0;
+	text-shadow: 1px 0px 3px #666;
+}
+#adminTabs li:hover {
+	background-color: #a8a8a8;
+	color:white;
+}
+#adminTabs .active {
+	background-color: #2C3E50;
+    color:#fff;
+}
+#adminTabs .tabHolder{
+    border:4px solid #2C3E50;
+    padding:20px;
+}
+
+#adminTabs .ui-grid-cell,
+#adminTabs .ui-grid-cell .ui-grid-vertical-bar,
+#adminTabs .ui-grid-row{
+    height:38px;
+}
+
+.btn-icon{
+    cursor:pointer;
+    margin-left:5px;
+}
+
+/* Dialog*/
+.modal-header{
+    background-color:#18BC9C;
+}
+/*-------------------------*/
+.modal-body{
+    font-size:1.6em;
+}
+.modal-body label.lbl{
+    font-weight:normal;
+}
+.modal-body input[type=email],
+.modal-body input[type=text]{
+    font-weight:bold;
+    width:13em;
+}
+.modal-body input[type=checkbox]{
+    width:20px;
+    height:20px;
+}
+.modal-body div.dlgRow{
+    margin-bottom:.5em;
+}
+.modal-body .fieldError img{
+    margin-top:-5px;
+}
+/*-------------------------*/
+.modal-footer .btn{
+    min-width:90px;
+}
+/*-------------------------*/
+.stations label.lbl{
+    width:8em;
+}

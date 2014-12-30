@@ -1,0 +1,38 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Edit Station</h3>
+</div>
+<div class="modal-body stations">
+    <form name="frmStationEdit" novalidate controller="formController">
+        <div class="dlgRow">
+            <label class="lbl">Station name:</label>
+            <input type="text" name="stationName" ng-model="stationName" value="{{stationName}}" required />
+            <span class="fieldError" ng-show="frmStationEdit.stationName.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmStationEdit.stationName.$error.required" title="Station name is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Station number:</label>
+            <input type="text" name="stationNumber" ng-model="stationNumber" value="{{stationNumber}}" required />
+            <span class="fieldError" ng-show="frmStationEdit.stationNumber.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmStationEdit.stationNumber.$error.required" title="Station number is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Station email:</label>
+            <input type="email" name="stationEmail" ng-model="stationEmail" value="{{stationEmail}}" required />
+            <span class="fieldError" ng-show="frmStationEdit.stationEmail.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmStationEdit.stationEmail.$error.required" title="Station email is required." alt="" />
+                <img src="/thursday/img/fieldError.png" ng-show="frmStationEdit.stationEmail.$error.email" title="Invalid email address." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl"></label>
+            <input id="chkActive" type="checkbox" ng-model="stationActive" ng-true-value="Yes" ng-false-value="No" />
+            <label for="chkActive">Active</label>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
