@@ -88,10 +88,10 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', fu
         data: $scope.stationsList,
         columnDefs: [
           { name: 'edit', displayName: '', width: 34, cellTemplate: '<img class="btn-small btn-icon" ng-click="getExternalScopes().editStation(row.entity)" src="/thursday/img/edit.png" alt="" title="Edit" /> ' },
-          { field: 'name', displayName: 'Station Name' },
-          { field: 'number', displayName: 'Station Number' },
+          { field: 'name', displayName: 'Station Name', width: 300 },
+          { field: 'number', displayName: 'Number', width: 140 },
           { field: 'stationEmail', displayName: 'Station Email' },
-          { field: 'active', displayName: 'Active', cellTemplate: '<div class="ui-grid-cell-contents"><span>{{COL_FIELD === \'No\' ? \'---\' : \'Yes\'}}</span></div>' }
+          { field: 'active', displayName: 'Active', width: 140, cellTemplate: '<div class="ui-grid-cell-contents alignCenter"><span>{{COL_FIELD === \'0\' ? \'---\' : \'Yes\'}}</span></div>' }
         ]
     };
 
@@ -139,8 +139,16 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', fu
             }
         });
 
-        modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
+        modalInstance.result.then(function (stationEdit) {
+            if (stationEdit.changed === true) {
+                //Save changes
+                $http.get('/thursday/php/updateStation.php', { params: { stationInfo: stationEdit } }).
+                success(function (data, status, headers, config) {
+                }).
+                error(function (data, status, headers, config) {
+                });
+
+            }
         });
     };
 
@@ -157,10 +165,6 @@ angular.module('checkoffApp').controller('ModalInstanceCtrlStations', function (
     $scope.stationActive = $scope.stationEdit.active;
     $scope.stationChanged = $scope.stationEdit.changed;
 
-    //$scope.selected = {
-    //    item: $scope.items[0]
-    //};
-
     $scope.ok = function () {
         if ($scope.frmStationEdit.$valid === true) {
             if ($scope.stationEdit.name !== $scope.stationName) {
@@ -176,10 +180,11 @@ angular.module('checkoffApp').controller('ModalInstanceCtrlStations', function (
                 $scope.stationEdit.changed = true;
             }
             if ($scope.stationEdit.active !== $scope.stationActive) {
-                $scope.stationEdit.active = $scope.stationActive;
+                $scope.stationEdit.active = $scope.stationActive === true ? '1' : '0';
                 $scope.stationEdit.changed = true;
             }
 
+            $scope.stationEdit.modifiedDate = getCurrentDateTime();
             $modalInstance.close($scope.stationEdit);
         }
     };
@@ -188,3 +193,28 @@ angular.module('checkoffApp').controller('ModalInstanceCtrlStations', function (
         $modalInstance.dismiss('cancel');
     };
 });
+
+function getCurrentDateTime() {
+
+    var d = new Date();
+    var curdt = d.getFullYear();
+    curdt += '-';
+    curdt += addZero(d.getMonth() + 1);
+    curdt += '-';
+    curdt += d.getDate();
+    curdt += ' ';
+    curdt += addZero(d.getHours());
+    curdt += ':';
+    curdt += addZero(d.getMinutes());
+    curdt += ':';
+    curdt += addZero(d.getSeconds());
+
+    return curdt;
+};
+
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+};
