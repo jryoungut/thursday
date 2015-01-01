@@ -260,9 +260,24 @@ angular.module('checkoffApp').controller('ModalInstanceCtrlApparatus', function 
     $scope.apparatusName = $scope.apparatusEdit.Apparatus;
     $scope.apparatusNumber = $scope.apparatusEdit.FleetNum;
     $scope.apparatusLocation = $scope.apparatusEdit.Location;
-    $scope.apparatusTireCnt = $scope.apparatusEdit.TireCnt;
     $scope.selectedTireCnt = $scope.apparatusEdit.TireCnt;
+
+    for (var i = 0; i < $scope.tireCnts.length; i++) {
+        if (parseInt($scope.apparatusEdit.TireCnt) === $scope.tireCnts[i]) {
+           $scope.selectedTireCnt = $scope.tireCnts[i];
+            break;
+        }
+    };
+
+    for (var i = 0; i < $scope.trackingType.length; i++) {
+        if ($scope.apparatusEdit.MotorTracking === $scope.trackingType[i].id) {
+            $scope.selectedTrackingType = $scope.trackingType[i];
+            break;
+        }
+    };
+
     $scope.apparatusActive = $scope.apparatusEdit.Active;
+
     $scope.apparatusChanged = $scope.apparatusEdit.changed;
 
     $scope.ok = function () {
