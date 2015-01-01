@@ -78,10 +78,14 @@ checkoffApp.controller('MainController', ['$scope', '$http', function ($scope, $
 
 
 /*******************************************************************************************/
-checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', function ($scope, $http, $q, $modal) {
+checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$rootScope', function ($scope, $http, $q, $modal, $rootScope) {
     $scope.tab = 1;
     $scope.admin = {};
     $scope.stationsList = [];
+    $scope.apparatusList = [];
+
+    $rootScope.tireCnts = [4, 6, 10];
+    $rootScope.trackingType = [{ id: 'hr', name: 'Hours' }, { id: 'mi', name: 'Mileage' }];
 
     $scope.gridOptionsStationsList = {
         enableSorting: true,
@@ -92,6 +96,18 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', fu
           { field: 'number', displayName: 'Number', width: 140 },
           { field: 'stationEmail', displayName: 'Station Email' },
           { field: 'active', displayName: 'Active', width: 140, cellTemplate: '<div class="ui-grid-cell-contents alignCenter"><span>{{COL_FIELD === \'0\' ? \'---\' : \'Yes\'}}</span></div>' }
+        ]
+    };
+
+    $scope.gridOptionsApparatusList = {
+        enableSorting: true,
+        data: $scope.apparatusList,
+        columnDefs: [
+          { name: 'edit', displayName: '', width: 34, cellTemplate: '<img class="btn-small btn-icon" ng-click="getExternalScopes().editApparatus(row.entity)" src="/thursday/img/edit.png" alt="" title="Edit" /> ' },
+          { field: 'Apparatus', displayName: 'Apparatus' },
+          { field: 'FleetNum', displayName: 'Fleet Number' },
+          { field: 'Location', displayName: 'Location' },
+          { field: 'Active', displayName: 'Active', width: 140, cellTemplate: '<div class="ui-grid-cell-contents alignCenter"><span>{{COL_FIELD === \'0\' ? \'---\' : \'Yes\'}}</span></div>' }
         ]
     };
 
@@ -118,6 +134,18 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', fu
 
                 break;
             case 3: //Apparatus
+                $http.get('/thursday/php/getApparatusAll.php').
+                success(function (listdata, status, headers, config) {
+                    $scope.gridOptionsApparatusList.data = listdata;
+                }).
+                error(function (data, status, headers, config) {
+                    if (!angular.isObject(data) || !data.message) {
+                        return ($q.reject("An unknown error occurred."));
+                    }
+                    // Otherwise, use expected error message.
+                    return ($q.reject(data.message));
+                });
+
                 break;
             case 4: //Settings
                 break;
@@ -143,6 +171,35 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', fu
             if (stationEdit.changed === true) {
                 //Save changes
                 $http.get('/thursday/php/updateStation.php', { params: { stationInfo: stationEdit } }).
+                success(function (data, status, headers, config) {
+                }).
+                error(function (data, status, headers, config) {
+                });
+
+            }
+        });
+    };
+
+
+    $scope.apparatusEdit = {};
+    $scope.admin.editApparatus = function (obj) {
+        $scope.apparatusEdit = obj;
+        $scope.apparatusEdit.changed = false;
+
+        var modalInstance = $modal.open({
+            templateUrl: '/thursday/content/dialogs/apparatus.html',
+            controller: 'ModalInstanceCtrlApparatus',
+            resolve: {
+                apparatus: function () {
+                    return $scope.apparatusEdit;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (apparatusEdit) {
+            if (apparatusEdit.changed === true) {
+                //Save changes
+                $http.get('/thursday/php/updateApparatus.php', { params: { apparatusInfo: apparatusEdit } }).
                 success(function (data, status, headers, config) {
                 }).
                 error(function (data, status, headers, config) {
@@ -186,6 +243,49 @@ angular.module('checkoffApp').controller('ModalInstanceCtrlStations', function (
 
             $scope.stationEdit.modifiedDate = getCurrentDateTime();
             $modalInstance.close($scope.stationEdit);
+        }
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+
+
+angular.module('checkoffApp').controller('ModalInstanceCtrlApparatus', function ($scope, $modalInstance, apparatus) {
+
+    $scope.apparatusEdit = apparatus;
+
+    $scope.apparatusName = $scope.apparatusEdit.Apparatus;
+    $scope.apparatusNumber = $scope.apparatusEdit.FleetNum;
+    $scope.apparatusLocation = $scope.apparatusEdit.Location;
+    $scope.apparatusTireCnt = $scope.apparatusEdit.TireCnt;
+    $scope.selectedTireCnt = $scope.apparatusEdit.TireCnt;
+    $scope.apparatusActive = $scope.apparatusEdit.Active;
+    $scope.apparatusChanged = $scope.apparatusEdit.changed;
+
+    $scope.ok = function () {
+        if ($scope.frmapparatusEdit.$valid === true) {
+            if ($scope.apparatusEdit.name !== $scope.apparatusName) {
+                $scope.apparatusEdit.name = $scope.apparatusName;
+                $scope.apparatusEdit.changed = true;
+            }
+            if ($scope.apparatusEdit.number !== $scope.apparatusNumber) {
+                $scope.apparatusEdit.number = $scope.apparatusNumber;
+                $scope.apparatusEdit.changed = true;
+            }
+            if ($scope.apparatusEdit.apparatusEmail !== $scope.apparatusEmail) {
+                $scope.apparatusEdit.apparatusEmail = $scope.apparatusEmail;
+                $scope.apparatusEdit.changed = true;
+            }
+            if ($scope.apparatusEdit.active !== $scope.apparatusActive) {
+                $scope.apparatusEdit.active = $scope.apparatusActive === true ? '1' : '0';
+                $scope.apparatusEdit.changed = true;
+            }
+
+            $scope.apparatusEdit.modifiedDate = getCurrentDateTime();
+            $modalInstance.close($scope.apparatusEdit);
         }
     };
 

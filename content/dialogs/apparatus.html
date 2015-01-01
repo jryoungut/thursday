@@ -1,0 +1,71 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Edit Apparatus</h3>
+</div>
+<div class="modal-body apparatus">
+    <form name="frmApparatusEdit" novalidate controller="formController">
+        <div class="dlgRow">
+            <label class="lbl">Apparatus:</label>
+            <input type="text" name="apparatusName" ng-model="apparatusName" value="{{apparatusName}}" required />
+            <span class="fieldError" ng-show="frmApparatusEdit.apparatusName.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmApparatusEdit.apparatusName.$error.required" title="Apparatus name is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Fleet number:</label>
+            <input type="text" name="apparatusNumber" ng-model="apparatusNumber" value="{{apparatusNumber}}" required />
+            <span class="fieldError" ng-show="frmApparatusEdit.apparatusNumber.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmApparatusEdit.apparatusNumber.$error.required" title="Apparatus number is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Location:</label>
+            <input type="text" name="apparatusLocation" ng-model="apparatusLocation" value="{{apparatusLocation}}" readonly />
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Tire count:</label>
+            <select ng-model="selectedTireCnt"
+                    ng-options="t for t in tireCnts track by t"
+                    required>
+            </select>
+            <span class="fieldError" ng-show="frmApparatusEdit.selectedTireCnt.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmApparatusEdit.selectedTireCnt.$error.required" title="Tire count is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Motor track by:</label>
+            <select ng-model="selectedTrackingType"
+                    ng-options="t.name for t in trackingType track by t.id"
+                    required>
+            </select>
+            <span class="fieldError" ng-show="frmApparatusEdit.selectedTrackingType.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmApparatusEdit.selectedTrackingType.$error.required" title="Tracking type is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl">Next service ({{selectedTrackingType.id}}):</label>
+            <input type="number" name="apparatusServiceDue" ng-model="apparatusServiceDue" value="{{apparatusServiceDue | number}}" required class="odometer" />
+            <span class="fieldError" ng-show="frmApparatusEdit.apparatusServiceDue.$invalid">
+                <img src="/thursday/img/fieldError.png" ng-show="frmApparatusEdit.apparatusServiceDue.$error.required" title="Next service due value is required." alt="" />
+            </span>
+        </div>
+        <div class="dlgRow" ng-show="apparatusDryPrime === '1'">
+            <label class="lbl"></label>
+            <input id="chkDryPrime" type="checkbox" ng-model="apparatusDryPrime" ng-checked="apparatusDryPrime === '1'" />
+            <label for="chkDryPrime">Dry prime</label>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl"></label>
+            <input id="chkAirTank" type="checkbox" ng-model="apparatusAirTank" ng-checked="apparatusAirTank === '1'" />
+            <label for="chkAirTank">Air tank</label>
+        </div>
+        <div class="dlgRow">
+            <label class="lbl"></label>
+            <input id="chkActive" type="checkbox" ng-model="apparatusActive" ng-checked="apparatusActive === '1'" />
+            <label for="chkActive">Active</label>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

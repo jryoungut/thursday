@@ -202,6 +202,10 @@
     width: 100%;
     height:650px;
 }
+.apparatusListGrid {
+    width: 100%;
+    height:650px;
+}
 
 #adminTabs {
     padding: 100px 20px 0 20px;
@@ -275,6 +279,9 @@
     width:20px;
     height:20px;
 }
+.modal-body select{
+    font-weight:bold;
+}
 .modal-body div.dlgRow{
     margin-bottom:.5em;
 }
@@ -286,6 +293,17 @@
     min-width:90px;
 }
 /*-------------------------*/
+.apparatus label.lbl,
 .stations label.lbl{
     width:8em;
+}
+
+.odometer {
+    text-align:right;
+    font-weight:bold;
+    letter-spacing:.2em;
+    background-image:url('/thursday/img/numFieldBackground.png');
+    background-repeat:no-repeat;
+    background-position:33px center;
+    width:150px;
 }
