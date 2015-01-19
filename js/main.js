@@ -4,7 +4,7 @@
 // Declare app level module which depends on views, and components
 var checkoffApp = angular.module('checkoffApp', [
   'ngRoute',
-  'ui.grid',
+  'ngGrid',
   'ui.bootstrap'
 ]).
 config(['$routeProvider', function ($routeProvider) {
@@ -75,14 +75,102 @@ checkoffApp.controller('MainController', ['$scope', '$http', function ($scope, $
 
 
 
-
+var CONST_SETTING_MAJOR_GROUP_NAME = 1;
 
 /*******************************************************************************************/
-checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$rootScope', function ($scope, $http, $q, $modal, $rootScope) {
-    $scope.tab = 1;
+
+checkoffApp.factory("transformRequestAsFormPost",function () {
+
+                // I prepare the request data for the form post.
+                function transformRequest(data, getHeaders) {
+                    var headers = getHeaders();
+                    headers["Content-type"] = "application/x-www-form-urlencoded; charset=utf-8";
+                    return (serializeData(data));
+                }
+
+                // Return the factory value.
+                return (transformRequest);
+
+                // ---
+                // PRVIATE METHODS.
+                // ---
+
+
+                // I serialize the given Object into a key-value pair string. This
+                // method expects an object and will default to the toString() method.
+                // --
+                // NOTE: This is an atered version of the jQuery.param() method which
+                // will serialize a data collection for Form posting.
+                // --
+                // https://github.com/jquery/jquery/blob/master/src/serialize.js#L45
+                function serializeData(data) {
+
+                    // If this is not an object, defer to native stringification.
+                    if (!angular.isObject(data)) {
+                        return ((data == null) ? "" : data.toString());
+                    }
+
+                    var buffer = [];
+
+                    // Serialize each key in the object.
+                    for (var name in data) {
+                        if (!data.hasOwnProperty(name)) {
+                            continue;
+                        }
+
+                        var value = data[name];
+
+                        buffer.push(
+                            encodeURIComponent(name) +
+                            "=" +
+                            encodeURIComponent((value == null) ? "" : value)
+                        );
+                    }
+
+                    // Serialize the buffer and clean it up for transportation.
+                    var source = buffer
+                        .join("&")
+                        .replace(/%20/g, "+")
+                    ;
+
+                    return (source);
+                }
+            });
+
+
+checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$rootScope', 'transformRequestAsFormPost', function ($scope, $http, $q, $modal, $rootScope, transformRequestAsFormPost) {
+    $scope.tab = 'CHECKOFF';
     $scope.admin = {};
+    $scope.form = {};
+    $scope.majorGroupsList = [];
     $scope.stationsList = [];
     $scope.apparatusList = [];
+    $scope.majorGroupsName = '';
+    $scope.includeMajorGroupsInactive = false;
+    $scope.majorGroupsListData = [];
+    $scope.gridOptionsMajorGroups = {
+        data: 'majorGroupsListData',
+        showGroupPanel: true,
+        rowTemplate:'<div style="height: 100%" ng-class="{inactiveRow: row.getProperty(\'active\') === 0}"><div ng-style="{ \'cursor\': row.cursor }" ng-repeat="col in renderedColumns" ng-class="col.colIndex()" class="ngCell ">' +
+                           '<div class="ngVerticalBar" ng-style="{height: rowHeight}" ng-class="{ ngVerticalBarVisible: !$last }"> </div>' +
+                           '<div ng-cell></div>' +
+                     '</div></div>',
+        columnDefs: [
+            { displayName: 'Edit', width: 34, cellTemplate: '<div><div class="ngCellText"><img src="/thursday/img/edit.png" alt="" ng-click="admin.editMajorGroups(row.entity)" title="Edit" /></div></div>' },
+            { field: 'name', displayName: 'Name' },
+            { field: 'active', displayName: 'Active', cellTemplate: '<div><div class="ngCellText">{{row.getProperty(col.field) === "1" ? "Yes" : "No"}}</div></div>' }
+        ]
+    };
+
+    $scope.getMajorGroupsName = function (i) {
+        $http.get('/thursday/php/getSetting.php', { params: { id: i } }).
+        success(function (data, status, headers, config) {
+            $scope.majorGroupsName = data[0].value;
+        }).
+        error(function (data, status, headers, config) {
+        });
+    };
+    $scope.getMajorGroupsName(CONST_SETTING_MAJOR_GROUP_NAME);
 
     $rootScope.tireCnts = [4, 6, 10];
     $rootScope.trackingType = [{ id: 'hr', name: 'Hours' }, { id: 'mi', name: 'Mileage' }];
@@ -94,7 +182,7 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
           { name: 'edit', displayName: '', width: 34, cellTemplate: '<img class="btn-small btn-icon" ng-click="getExternalScopes().editStation(row.entity)" src="/thursday/img/edit.png" alt="" title="Edit" /> ' },
           { field: 'name', displayName: 'Station Name', width: 300 },
           { field: 'number', displayName: 'Number', width: 140 },
-          { field: 'stationEmail', displayName: 'Station Email' },
+          { field: 'stationEmail', displayName: 'Station Email', width: 300 },
           { field: 'active', displayName: 'Active', width: 140, cellTemplate: '<div class="ui-grid-cell-contents alignCenter"><span>{{COL_FIELD === \'0\' ? \'---\' : \'Yes\'}}</span></div>' }
         ]
     };
@@ -102,12 +190,32 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
     $scope.gridOptionsApparatusList = {
         enableSorting: true,
         data: $scope.apparatusList,
+        enableFiltering: true,
+        multiSelect: false,
+        modifierKeysToMultiSelect: false,
+        showFooter: true,
         columnDefs: [
           { name: 'edit', displayName: '', width: 34, cellTemplate: '<img class="btn-small btn-icon" ng-click="getExternalScopes().editApparatus(row.entity)" src="/thursday/img/edit.png" alt="" title="Edit" /> ' },
           { field: 'Apparatus', displayName: 'Apparatus' },
           { field: 'FleetNum', displayName: 'Fleet Number' },
           { field: 'Location', displayName: 'Location' },
           { field: 'Active', displayName: 'Active', width: 140, cellTemplate: '<div class="ui-grid-cell-contents alignCenter"><span>{{COL_FIELD === \'0\' ? \'---\' : \'Yes\'}}</span></div>' }
+        ],
+        onRegisterApi: function (gridApi) {
+            $scope.gridApparatusApi = gridApi;
+        }
+    };
+
+    $scope.gridOptionsMajorGroupsList = {
+        enableSorting: true,
+        data: $scope.majorGroupsList,
+        enableFiltering: true,
+        multiSelect: false,
+        showFooter: true,
+        columnDefs: [
+          { name: 'edit', displayName: '', width: 34, cellTemplate: '<img class="btn-small btn-icon" ng-click="getExternalScopes().editMajorGroups(row.entity)" src="/thursday/img/edit.png" alt="" title="Edit" /> ' },
+          { field: 'name', displayName: 'Name' },
+          { field: 'active', displayName: 'Active', width: 140, cellTemplate: '<div class="ui-grid-cell-contents alignCenter"><span>{{COL_FIELD === \'0\' ? \'---\' : \'Yes\'}}</span></div>' }
         ]
     };
 
@@ -117,9 +225,9 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
         $scope.tab = t;
 
         switch (t) {
-            case 1: //Checkoffs
+            case 'CHECKOFFS': //Checkoffs
                 break;
-            case 2: //Stations
+            case 'STATIONS': //Stations
                 $http.get('/thursday/php/getStationsAll.php').
                 success(function (listdata, status, headers, config) {
                     $scope.gridOptionsStationsList.data = listdata;
@@ -133,10 +241,12 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
                 });
 
                 break;
-            case 3: //Apparatus
+            case 'APPARATUS': //Apparatus
                 $http.get('/thursday/php/getApparatusAll.php').
                 success(function (listdata, status, headers, config) {
-                    $scope.gridOptionsApparatusList.data = listdata;
+                    window.setTimeout(function () {
+                        $scope.gridOptionsApparatusList.data = listdata;
+                    }, 10);
                 }).
                 error(function (data, status, headers, config) {
                     if (!angular.isObject(data) || !data.message) {
@@ -146,11 +256,140 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
                     return ($q.reject(data.message));
                 });
 
+                window.setTimeout(function () {
+                    var newWidth = document.getElementById('divApparatusGridHolder').offsetWidth;
+                    angular.element(document.getElementsByClassName('apparatusListGrid')[0]).css('width', newWidth + 'px');
+                    var winHeight = $(window).height();
+                    var elTop = document.getElementById('divApparatusGridHolder').offsetTop;
+                    //var newHeight = document.getElementById('divApparatusGridHolder').offsetHeight;
+                    var newHeight = winHeight - elTop - 40;
+                    angular.element(document.getElementsByClassName('apparatusListGrid')[0]).css('height', newHeight + 'px');
+                }, 10);
+
                 break;
-            case 4: //Settings
+            case 'MAJOR_GROUPS': //Batallions
+                var b = $scope.includeMajorGroupsInactive;
+                $http.get('/thursday/php/getMajorGroupsAll.php', { params: { onlyActive: $scope.includeMajorGroupsInactive } }).
+                success(function (listdata, status, headers, config) {
+                    $scope.majorGroupsListData = listdata;
+                    window.setTimeout(function () {
+                    }, 100);
+                }).
+                error(function (data, status, headers, config) {
+                    if (!angular.isObject(data) || !data.message) {
+                        return ($q.reject("An unknown error occurred."));
+                    }
+                    // Otherwise, use expected error message.
+                    return ($q.reject(data.message));
+                });
+
+                window.setTimeout(function () {
+                    var newWidth = document.getElementById('divMajorGroupsGridHolder').offsetWidth;
+                    angular.element(document.getElementsByClassName('majorGroupsListGrid')[0]).css('width', newWidth + 'px');
+                    var winHeight = $(window).height();
+                    var elTop = document.getElementById('divMajorGroupsGridHolder').offsetTop;
+                    var newHeight = winHeight - elTop - 40;
+                    angular.element(document.getElementsByClassName('majorGroupsListGrid')[0]).css('height', newHeight + 'px');
+                }, 10);
+
+                break;
+            case 'SETTINGS': //Settings
+                break;
+            case 'USERS': //Users
                 break;
         }
     };  //END changetab
+
+    $scope.items = ['item1', 'item2', 'item3'];
+    $scope.majorGroupEdit = {};
+    $scope.majorGroupEdit.changed = false;
+    $scope.admin.editMajorGroups = function (obj) {
+        if (obj !== undefined) {
+            $scope.majorGroupEdit = obj;
+            $scope.majorGroupEdit.changed = false;
+            $scope.majorGroupEdit.mode = 'edit';
+        }
+        else {
+            $scope.majorGroupEdit.mode = 'add';
+            $scope.majorGroupEdit.changed = false;
+            $scope.majorGroupEdit.name = '';
+            $scope.majorGroupEdit.active = '1';
+        }
+        $scope.majorGroupEdit.mainName = $scope.majorGroupsName;
+
+        var modalInstance = $modal.open({
+            templateUrl: '/thursday/content/dialogs/majorGroups.html',
+            controller: 'ModalInstanceCtrlMajorGroups',
+            resolve: {
+                items: function () {
+                    return $scope.majorGroupEdit;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (items) {
+            if (items.changed === true) {
+                //Save changes
+                $http.get(
+                    '/thursday/php/updateMajorGroup.php',
+                    {
+                        params: {
+                            id: items.id,
+                            name: items.name,
+                            active: items.active,
+                            modifiedDate: items.modifiedDate
+                        }
+                    })
+                //////var request = $http({
+                //////    method: 'GET',
+                //////    url: '/thursday/php/updateMajorGroup.php',
+                //////    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                //////    data: '?test=jack'
+                //////    //data: {majorGroupInfo: items}
+                //////})
+                    .
+                success(function (data, status, headers, config) {
+                    $scope.changetab('MAJOR_GROUPS');
+                }).
+                error(function (data, status, headers, config) {
+                });
+
+            }
+        });
+
+
+        //////if (obj !== undefined) {
+        //////    $scope.majorGroupEdit = obj;
+        //////    $scope.majorGroupEdit.changed = false;
+        //////    $scope.majorGroupEdit.mode = 'EDIT';
+        //////}
+        //////else {
+        //////    $scope.majorGroupEdit.mode = 'ADD';
+        //////}
+
+        //////var modalInstance = $modal.open({
+        //////    templateUrl: '/thursday/content/dialogs/majorGroups.html',
+        //////    controller: 'ModalInstanceCtrlMajorGroups',
+        //////    resolve: {
+        //////        majorGroupEdit: function () {
+        //////            return $scope.majorGroupEdit;
+        //////        }
+        //////    }
+        //////});
+
+        //////modalInstance.result.then(function (majorGroupsEdit) {
+        //////    if (majorGroupsEdit.changed === true) {
+        //////        //Save changes
+        //////        $http.get('/thursday/php/updateMajorGroups.php', { params: { majorGroupInfo: majorGroupEdit, mode: majorGroupsEdit.mode } }).
+        //////        success(function (data, status, headers, config) {
+        //////        }).
+        //////        error(function (data, status, headers, config) {
+        //////        });
+
+        //////    }
+        //////});
+    };
+
 
     $scope.stationEdit = {};
     $scope.admin.editStation = function (obj) {
@@ -188,6 +427,7 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
 
         var modalInstance = $modal.open({
             templateUrl: '/thursday/content/dialogs/apparatus.html',
+            //templateUrl: 'myModalContent.html',
             controller: 'ModalInstanceCtrlApparatus',
             resolve: {
                 apparatus: function () {
@@ -211,6 +451,62 @@ checkoffApp.controller('AdminController', ['$scope', '$http', '$q', '$modal', '$
 
 }]);
 
+
+//////angular.module('checkoffApp').controller('ModalInstanceCtrlMajorGroups', function ($scope, $modalInstance, majorGroupEdit) {
+
+//////    $scope.majorGroupEdit = majorGroupEdit;
+
+//////    $scope.majorGroupName = $scope.majorGroupEdit.name;
+//////    $scope.majorGroupActive = $scope.majorGroupEdit.active;
+//////    //$scope.majorGroupChanged = $scope.majorGroupEdit.changed;
+
+//////    //$scope.ok = function () {
+//////    //    if ($scope.frmMajorGroupsEdit.$valid === true) {
+//////    //        if ($scope.majorGroupEdit.name !== $scope.majorGroupName) {
+//////    //            $scope.majorGroupEdit.name = $scope.majorGroupName;
+//////    //            $scope.majorGroupEdit.changed = true;
+//////    //        }
+//////    //        if ($scope.majorGroupEdit.active !== $scope.majorGroupActive) {
+//////    //            $scope.majorGroupEdit.active = $scope.majorGroupActive === true ? '1' : '0';
+//////    //            $scope.majorGroupEdit.changed = true;
+//////    //        }
+
+//////    //        $scope.majorGroupEdit.modifiedDate = getCurrentDateTime();
+//////    //        $modalInstance.close($scope.majorGroupEdit);
+//////    //    }
+//////    //};
+
+//////    $scope.cancel = function () {
+//////        $modalInstance.dismiss('cancel');
+//////    };
+//////});
+
+angular.module('checkoffApp').controller('ModalInstanceCtrlMajorGroups', function ($scope, $modalInstance, items) {
+
+    $scope.items = items;
+    $scope.majorGroupEdit = [];
+    angular.copy($scope.items, $scope.majorGroupEdit);
+
+    $scope.ok = function () {
+        if ($scope.form.frmMajorGroupsEdit.$valid === true) {
+            if ($scope.majorGroupEdit.name !== $scope.items.name) {
+                //////$scope.majorGroupEdit.name = $scope.items.name;
+                $scope.majorGroupEdit.changed = true;
+            }
+            if ($scope.majorGroupEdit.active !== $scope.items.active) {
+                //////$scope.majorGroupEdit.active = $scope.items.active === true ? '1' : '0';
+                $scope.majorGroupEdit.changed = true;
+            }
+
+            $scope.majorGroupEdit.modifiedDate = getCurrentDateTime();
+            $modalInstance.close($scope.majorGroupEdit);
+        }
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
 
 angular.module('checkoffApp').controller('ModalInstanceCtrlStations', function ($scope, $modalInstance, station) {
 
@@ -333,3 +629,6 @@ function addZero(i) {
     }
     return i;
 };
+
+
+

@@ -15,15 +15,23 @@
     <!-- Theme -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.theme.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.structure.css" />
+
     <!-- Custom CSS -->
     <link href="css/freelancer.css" rel="stylesheet">
-    <link href="css/ui-grid-stable.css" rel="styleSheet" />
+    <!--<link href="css/ui-grid-stable.css" rel="styleSheet" />-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.css" rel="styleSheet" />
     <link href="css/main.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -45,7 +53,10 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
 
-    <script src="js/ui-grid-stable.js"></script>
+    <!--<script src="js/ui-grid-stable.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid-layout.min.js"></script>
+
     <!-- Custom JavaScript -->
     <script src="js/main.js"></script>
 
@@ -92,37 +103,44 @@
             </div>
         </div>
     </header>-->
+    <div class="clearfix"></div>
     <section id="adminTabs">
-        <div>
-            <ul ng-init="tab = 1">
-                <li ng-class="{active:tab===1}" ng-click="changetab(1)">
-                    Checkoffs
-                </li>
-                <li ng-class="{active:tab===2}" ng-click="changetab(2)">
-                    Stations
-                </li>
-                <li ng-class="{active:tab===3}" ng-click="changetab(3)">
-                    Apparatus
-                </li>
-                <li ng-class="{active:tab===4}" ng-click="changetab(4)">
-                    Settings
-                </li>
-            </ul>
-        </div>
-        <div class="clearfix"></div>
-        <div class="tabHolder">
-            <div ng-show="tab === 1"> I eat chocolates, alive! </div>
-            <div ng-show="tab === 2">
-                <div id="stationsGrid" ui-grid="gridOptionsStationsList" class="stationsListGrid" external-scopes="admin"></div>
-            </div>
-            <div ng-show="tab === 3">
-                <div id="apparatusGrid" ui-grid="gridOptionsApparatusList" class="apparatusListGrid" external-scopes="admin"></div>
-            </div>
-            <div ng-show="tab === 4"> Settings go here... :D</div>
-        </div>
-    </section>	
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+        <tabset>
+            <tab heading="Checkoffs" ng-click="changetab('CHECKOFFS')">
+                The checkoff list goes here
+            </tab>
+            <tab heading="Apparatus" ng-click="changetab('APPARATUS')">
+                <div id="divApparatusGridHolder">
+                    <!--<div id="apparatusGrid" ui-grid="gridOptionsApparatusList" class="apparatusListGrid" external-scopes="admin"
+                         ui-grid-resize-columns
+                         ui-grid-selection
+                         ui-grid-auto-resize></div>-->
+                </div>
+            </tab>
+            <tab heading="Stations" ng-click="changetab('STATIONS')">
+                <!--<div id="stationsGrid" ui-grid="gridOptionsStationsList" class="stationsListGrid" external-scopes="admin"></div>-->
+            </tab>
+            <tab heading="{{majorGroupsName}}" ng-click="changetab('MAJOR_GROUPS')">
+                <button type="button" class="btn btn-default btn-sm" ng-click="admin.editMajorGroups()">Add...</button>
+                <input id="chkIncludeInactiveMajorGroups" type="checkbox"
+                       ng-model="includeMajorGroupsInactive"
+                       ng-click="changetab('MAJOR_GROUPS')"
+                        />
+                <label for="chkIncludeInactiveMajorGroups">Include inactive items</label>{{includeMajorGroupsInactive}}
+                <div id="divMajorGroupsGridHolder">
+                    <div class="gridStyleMajorGroups" ng-grid="gridOptionsMajorGroups">
+                    </div>
+                </div>
+            </tab>
+            <tab heading="Settings" ng-click="changetab('SETTINGS')">
+                <div>Settings stuff goes here</div>
+            </tab>
+            <tab heading="Users" ng-click="changetab('USERS')">
+                <div>Users go here</div>
+            </tab>
+        </tabset>
+</section>	
+
     <!-- Bootstrap Core JavaScript -->
     <script src="/thursday/js/bootstrap.min.js"></script>
     <script src="/thursday/js/ui-bootstrap-tpls-0.12.0.js"></script>
@@ -134,5 +152,29 @@
     <script src="js/jqBootstrapValidation.js"></script>
     <!-- Custom Theme JavaScript -->
     <script src="js/freelancer.js"></script>
+
+
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li ng-repeat="item in items">
+                    <a ng-click="selected.item = item">{{ item }}</a>
+                </li>
+            </ul>
+            Selected: <b>{{ selected.item }}</b>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+
+
+
 </body>
 </html>

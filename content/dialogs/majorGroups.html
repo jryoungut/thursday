@@ -1,0 +1,23 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">{{majorGroupEdit.mode}} <span>{{majorGroupEdit.mainName}}</span></h3>
+</div>
+<div class="modal-body majorGroups" ng-class="{'inactiveRow': majorGroupEdit.active === '0'}">
+    <form name="form.frmMajorGroupsEdit" novalidate>
+    <div class="dlgRow">
+        <label class="lbl">Name:</label>
+        <input type="text" name="majorGroupName" ng-model="majorGroupEdit.name" value="{{majorGroupEdit.name}}" required />
+        <span class="fieldError" ng-show="form.frmMajorGroupsEdit.majorGroupName.$invalid">
+            <img src="/thursday/img/fieldError.png" ng-show="form.frmMajorGroupsEdit.majorGroupName.$error.required" title="Name is required." alt="" />
+        </span>
+    </div>
+    <div class="dlgRow">
+        <label class="lbl"></label>
+        <input id="chkActive" type="checkbox" ng-model="majorGroupEdit.active" ng-checked="majorGroupEdit.active === '1'" ng-true-value="1" ng-false-value="0" />
+        <label for="chkActive">Active</label>
+    </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

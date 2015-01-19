@@ -14,15 +14,22 @@
     <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.theme.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/jquery-ui.structure.css" />
+
     <!-- Custom CSS -->
     <link href="css/freelancer.css" rel="stylesheet">
-    <link href="css/ui-grid-stable.css" rel="styleSheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.css" rel="styleSheet" />
     <link href="css/main.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -43,7 +50,9 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
 
-    <script src="js/ui-grid-stable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-grid/2.0.11/ng-grid-layout.min.js"></script>
+
     <!-- Custom JavaScript -->
     <script src="js/main.js"></script>
 
@@ -222,7 +231,7 @@
                     </div>
                     <div class="row chkboxRow issue-row">
                         <label>Issues:</label>
-                        <div ui-grid="{ data: checkoffData.issues }" class="myGrid"></div>
+                        <!--<div ui-grid="{ data: checkoffData.issues }" class="myGrid"></div>-->
                     </div>
                     <div class="row chkboxRow signature-row">
                         <label>Electronic signature:</label>
